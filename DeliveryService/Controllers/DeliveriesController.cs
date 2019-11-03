@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DeliveryService.Models;
+using DeliveryService.Repository;
 
 namespace DeliveryService.Controllers
 {
@@ -33,9 +34,7 @@ namespace DeliveryService.Controllers
                 return BadRequest("Необходимо указать период!");
             }
 
-            //Будем сравнивать даты, а не даты с секундами, так как в БД храним - дату без времени
-            return await _context.Deliveries
-                .Where(x => from.Value.Date <= x.DateOf && x.DateOf <= to.Value.Date)
+            return await _context.Deliveries.GetDelivery(from.Value, to.Value)
                 .ToListAsync();
         }
 

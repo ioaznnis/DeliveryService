@@ -7,7 +7,7 @@ namespace DeliveryService.Models
     /// <summary>
     /// Поставка
     /// </summary>
-    public class Delivery
+    public class Delivery : IId
     {
         public long Id { get; set; }
 

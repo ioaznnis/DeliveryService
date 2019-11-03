@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -53,8 +54,8 @@ namespace DeliveryService.Models
             {
                 _context.Providers.AddRange(Enumerable.Range(1, 10).Select(x => new Provider()
                 {
-                    Name = new Guid().ToString(),
-                    Address = new Guid().ToString(),
+                    Name = Guid.NewGuid().ToString(),
+                    Address = Guid.NewGuid().ToString(),
                     Phone = GeneratePhoneNumber(random)
                 }));
 
@@ -65,11 +66,39 @@ namespace DeliveryService.Models
             {
                 _context.TypeEquipments.AddRange(Enumerable.Range(1, 10).Select(x => new TypeEquipment()
                 {
-                    Name = new Guid().ToString(),
+                    Name = Guid.NewGuid().ToString(),
                 }));
 
                 await _context.SaveChangesAsync();
             }
+
+            if (!await _context.Deliveries.AnyAsync())
+            {
+                var providers = await _context.Providers.ToListAsync();
+                var typeEquipments = await _context.TypeEquipments.ToListAsync();
+
+                //Будем считать
+                _context.Deliveries.AddRange(Enumerable.Range(1, 1000).Select(x => new Delivery()
+                {
+                    TypeEquipmentId = GetRandomEntityId(providers, random),
+                    ProviderId = GetRandomEntityId(typeEquipments, random),
+                    Quantity = random.Next(1000),
+                    DateOf = DateTime.Today.AddDays(-random.Next(DateTime.Today.DayOfYear)),
+                }));
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Выбирает случайный Id в коллекции данных
+        /// </summary>
+        /// <param name="providers"></param>
+        /// <param name="random"></param>
+        /// <returns></returns>
+        private static long GetRandomEntityId<T>(IReadOnlyList<T> providers, Random random) where T : IId
+        {
+            return providers[random.Next(providers.Count-1)].Id;
         }
     }
 }

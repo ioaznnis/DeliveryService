@@ -6,7 +6,7 @@ namespace DeliveryService.Models
     /// <summary>
     /// Тип оборудования
     /// </summary>
-    public class TypeEquipment
+    public class TypeEquipment : IId
     {
         public long Id { get; set; }
 

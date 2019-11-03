@@ -6,7 +6,7 @@ namespace DeliveryService.Models
     /// <summary>
     /// Поставщик
     /// </summary>
-    public class Provider
+    public class Provider : IId
     {
         public long Id { get; set; }
 
